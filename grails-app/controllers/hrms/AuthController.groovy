@@ -13,14 +13,25 @@ class AuthController {
 
     def login() {
         try {
-            def result = userService.login(params.username, params.password)
+            def role = params.role ?: 'admin'
+            def result = userService.loginByRole(role)
             if (result.success) {
-                session.currentUser = result.user
-                session.companyId = result.user?.company?.id
+                def u = result.user
+                session.currentUser = u
+                session.companyId = u?.company?.id
+                def userDto = [
+                    id: u?.id,
+                    username: u?.username,
+                    firstName: u?.firstName,
+                    lastName: u?.lastName,
+                    email: u?.email,
+                    isAdmin: u?.isAdmin,
+                    companyName: u?.company?.companyName
+                ]
                 render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([
                     success: true,
                     message: 'Login successful',
-                    user: result.user,
+                    user: userDto,
                     token: result.token
                 ])
             } else {

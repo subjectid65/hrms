@@ -29,7 +29,7 @@ async function api(url, options = {}) {
 async function login(e) {
     e.preventDefault();
     const form = e.target;
-    const data = { username: form.username.value, password: form.password.value };
+    const data = { role: form.role.value };
     const result = await api(API + '/auth/login', { method: 'POST', body: JSON.stringify(data) });
     if (result.success) location.reload();
     else alert(result.message || 'Login failed');

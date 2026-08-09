@@ -412,11 +412,16 @@
                 <h1>HRMS</h1>
                 <p>White-Label HR Management System</p>
                 <form onsubmit="login(event)">
-                    <div class="form-group"><label>Username</label><input name="username" required></div>
-                    <div class="form-group"><label>Password</label><input name="password" type="password" required></div>
+                    <div class="form-group"><label>Select Role</label>
+                        <select name="role">
+                            <option value="admin">Admin</option>
+                            <option value="hr">HR Manager</option>
+                            <option value="employee">Employee</option>
+                            <option value="manager">Manager</option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary">Sign In</button>
                 </form>
-                <p style="margin-top:16px;font-size:12px;color:#999;text-align:center">Default: admin / admin123</p>
             </div>
         </div>
     </g:else>

@@ -6,6 +6,35 @@ import java.time.LocalDate
 @Transactional
 class UserService {
 
+    def loginByRole(String role) {
+        // Each role gets its own unique demo user with role-appropriate data
+        String username = role + '_demo_' + System.currentTimeMillis()
+        String firstName
+        Boolean isAdmin = false
+        switch (role) {
+            case 'admin': firstName = 'Admin'; isAdmin = true; break
+            case 'hr': firstName = 'HR'; break
+            case 'employee': firstName = 'Employee'; break
+            case 'manager': firstName = 'Manager'; break
+            default: firstName = role.capitalize()
+        }
+        User user = new User(
+            username: username,
+            firstName: firstName,
+            lastName: 'Demo',
+            email: role + '@demo.com',
+            phone: '+971-50-000-0000',
+            enabled: true,
+            isAdmin: isAdmin,
+            company: Company.get(1),
+            createdBy: null as Long
+        )
+        user.save(flush: true, failOnError: true)
+
+        String token = generateToken(user)
+        return [success: true, user: user, token: token]
+    }
+
     def login(String username, String password) {
         User user = User.findByUsername(username)
         if (!user || !user.enabled) {
