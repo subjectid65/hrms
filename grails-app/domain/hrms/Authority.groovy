@@ -4,7 +4,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @EqualsAndHashCode(includes = ['authority'])
-@ToString(includeNames = true, includePackages = false)
+@ToString(includeNames = true)
 class Authority {
 
     String authority
@@ -19,9 +19,6 @@ class Authority {
         authority column: 'authority'
     }
 
-    static belongsTo = [user: User]
-
-    static hasMany = [users: User]
 
     String toString() { authority }
 }

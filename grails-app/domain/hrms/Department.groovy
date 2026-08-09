@@ -19,11 +19,7 @@ class Department {
 
     static constraints = {
         name blank: false, maxSize: 100
-        code blank: false, maxSize: 20, validator: { val, obj ->
-            if (Department.countByCompanyAndCode(obj.company, val) > 0) {
-                return 'department.code.exists'
-            }
-        }
+        code blank: false, maxSize: 20
         description maxSize: 500, nullable: true
         company nullable: false
         parentDepartment nullable: true

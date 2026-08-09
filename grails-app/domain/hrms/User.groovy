@@ -5,7 +5,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 @EqualsAndHashCode(includes = ['username'])
-@ToString(includeNames = true, includePackages = false)
+@ToString(includeNames = true)
 class User {
 
     String username
