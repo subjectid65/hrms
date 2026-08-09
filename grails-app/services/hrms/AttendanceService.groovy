@@ -26,7 +26,6 @@ class AttendanceService {
         )
         log.save(flush: true, failOnError: true)
 
-        // Update or create attendance record
         AttendanceRecord record = AttendanceRecord.findByEmployeeIdAndAttendanceDate(employeeId, LocalDate.now())
         if (!record) {
             record = new AttendanceRecord(
@@ -65,13 +64,11 @@ class AttendanceService {
         )
         log.save(flush: true, failOnError: true)
 
-        // Update attendance record
         AttendanceRecord record = AttendanceRecord.findByEmployeeIdAndAttendanceDate(employeeId, LocalDate.now())
         if (record) {
             record.checkOutTime = LocalTime.now()
             record.checkOutSource = source ?: 'MANUAL'
 
-            // Calculate working hours
             if (record.checkInTime && record.checkOutTime) {
                 long minutes = java.time.Duration.between(record.checkInTime, record.checkOutTime).toMinutes()
                 record.totalWorkingHours = (int) (minutes / 60)
@@ -121,21 +118,34 @@ class AttendanceService {
     }
 
     def getAttendanceReport(Long companyId, Integer year, Integer month) {
-        def records = getMonthlyAttendance(companyId, year, month)
+        List<AttendanceRecord> records = getMonthlyAttendance(companyId, year, month) as List<AttendanceRecord>
 
-        def report = [
-            totalDays: records.size(),
-            present: records.count { it.status == 'PRESENT' },
-            absent: records.count { it.status == 'ABSENT' || it.isAbsent },
-            late: records.count { it.lateMinutes > 0 },
-            halfDay: records.count { it.isHalfDay },
-            onLeave: records.count { it.isOnLeave }
+        int totalDays = records.size()
+        int present = 0
+        int absent = 0
+        int late = 0
+        int halfDay = 0
+        int onLeave = 0
+
+        for (AttendanceRecord r : records) {
+            if ('PRESENT' == r.status) present++
+            if ('ABSENT' == r.status || Boolean.TRUE == r.isAbsent) absent++
+            if (r.lateMinutes != null && r.lateMinutes > 0) late++
+            if (Boolean.TRUE == r.isHalfDay) halfDay++
+            if (Boolean.TRUE == r.isOnLeave) onLeave++
+        }
+
+        return [
+            totalDays: totalDays,
+            present: present,
+            absent: absent,
+            late: late,
+            halfDay: halfDay,
+            onLeave: onLeave
         ]
-        return report
     }
 
     private int calculateLateMinutes(LocalTime checkInTime) {
-        // Assume standard check-in time is 9:00 AM
         LocalTime standardCheckIn = LocalTime.of(9, 0)
         if (checkInTime.isAfter(standardCheckIn)) {
             return (int) java.time.Duration.between(standardCheckIn, checkInTime).toMinutes()
@@ -144,7 +154,6 @@ class AttendanceService {
     }
 
     private int calculateEarlyMinutes(LocalTime checkOutTime) {
-        // Assume standard check-out time is 6:00 PM
         LocalTime standardCheckOut = LocalTime.of(18, 0)
         if (checkOutTime.isBefore(standardCheckOut)) {
             return (int) java.time.Duration.between(checkOutTime, standardCheckOut).toMinutes()
