@@ -1,10 +1,7 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 
-@CompileStatic
 class Designation {
 
     String name
@@ -19,7 +16,6 @@ class Designation {
     LocalDate updatedAt
     Long createdBy
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         name blank: false, maxSize: 150
         code blank: false, maxSize: 20
@@ -31,7 +27,6 @@ class Designation {
         isActive nullable: false
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'designation'
         id column: 'designation_id', generator: 'native'

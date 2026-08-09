@@ -1,11 +1,8 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 import java.util.Date
 
-@CompileStatic
 class Employee {
 
     String employeeCode
@@ -84,7 +81,6 @@ class Employee {
                         'visaCopyUrl', 'emiratesIdCopyUrl', 'contractUrl', 'cvUrl',
                         'profilePictureUrl']
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         employeeCode blank: false, maxSize: 20
         firstName blank: false, maxSize: 100
@@ -152,7 +148,6 @@ class Employee {
         probationEndDate nullable: true
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'employee'
         id column: 'employee_id', generator: 'native'

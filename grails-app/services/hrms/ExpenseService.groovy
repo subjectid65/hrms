@@ -1,16 +1,12 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.time.LocalDate
 
-@CompileStatic
 @Transactional
 class ExpenseService {
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def createExpense(Long companyId, Map<String, Object> data, Long createdBy) {
         Expense expense = new Expense(
             employee: Employee.get(data.employeeId),
@@ -29,7 +25,6 @@ class ExpenseService {
         return expense
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listExpenses(Long companyId, Map params = [:]) {
         Expense.withCriteria {
             eq('employee.company', Company.get(companyId))
@@ -54,7 +49,6 @@ class ExpenseService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def countExpenses(Long companyId, Map params = [:]) {
         return Expense.count {
             eq('employee.company', Company.get(companyId))
@@ -80,7 +74,6 @@ class ExpenseService {
         return Expense.get(id)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def approveExpense(Long id, Map<String, Object> data, Long approvedBy) {
         Expense expense = Expense.get(id)
         if (!expense) {
@@ -119,7 +112,6 @@ class ExpenseService {
         return expense
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getExpenseSummary(Long companyId, Integer year, Integer month) {
         LocalDate from = LocalDate.of(year, month, 1)
         LocalDate to = from.plusMonths(1).minusDays(1)

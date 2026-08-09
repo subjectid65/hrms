@@ -1,12 +1,9 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@CompileStatic
 @EqualsAndHashCode(includes = ['username'])
 @ToString(includeNames = true, includePackages = false)
 class User {
@@ -28,7 +25,6 @@ class User {
     LocalDate updatedAt
     Long createdBy
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         username blank: false, maxSize: 50, unique: true
         password blank: false, maxSize: 255
@@ -45,7 +41,6 @@ class User {
         employee nullable: true
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'usr'
         id column: 'usr_id', generator: 'native'

@@ -1,10 +1,7 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import java.math.BigDecimal
 
-@CompileStatic
 class PayslipComponent {
 
     Payslip payslip
@@ -12,7 +9,6 @@ class PayslipComponent {
     BigDecimal amount
     String remarks
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         payslip nullable: false
         salaryComponent nullable: false
@@ -20,7 +16,6 @@ class PayslipComponent {
         remarks maxSize: 500, nullable: true
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'payslip_component'
         id column: 'payslip_component_id', generator: 'native'

@@ -1,16 +1,12 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.time.LocalDate
 
-@CompileStatic
 @Transactional
 class PayrollService {
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def createSalaryComponent(Long companyId, Map<String, Object> data, Long createdBy) {
         SalaryComponent component = new SalaryComponent(
             name: data.name,
@@ -27,7 +23,6 @@ class PayrollService {
         return component
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listSalaryComponents(Long companyId) {
         return SalaryComponent.findAllByCompany(Company.get(companyId), [sort: 'name', order: 'asc'])
     }
@@ -36,7 +31,6 @@ class PayrollService {
         return Payslip.get(id)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listPayslips(Long companyId, Map params = [:]) {
         Payslip.withCriteria {
             eq('employee.company', Company.get(companyId))
@@ -59,7 +53,6 @@ class PayrollService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def countPayslips(Long companyId, Map params = [:]) {
         return Payslip.count {
             eq('employee.company', Company.get(companyId))
@@ -78,7 +71,6 @@ class PayrollService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def generatePayslip(Long employeeId, Integer year, Integer month, Long createdBy) {
         Employee employee = Employee.get(employeeId)
         if (!employee) {
@@ -185,7 +177,6 @@ class PayrollService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     private int calculateWorkingDays(Integer year, Integer month) {
         LocalDate firstDay = LocalDate.of(year, month, 1)
         int workingDays = 0
@@ -199,7 +190,6 @@ class PayrollService {
         return workingDays > 0 ? workingDays : 21
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getPayrollSummary(Long companyId, Integer year, Integer month) {
         List<Payslip> payslips = listPayslips(companyId, [year: year, month: month])
 

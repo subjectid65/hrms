@@ -1,20 +1,15 @@
 package hrms
 
-import groovy.transform.CompileStatic
-import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
-@CompileStatic
 @Transactional
 class EmployeeService {
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getCompanyById(Long id) {
         return Company.get(id)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listCompanies(Map params = [:]) {
         Company.withCriteria {
             if (params.isActive != null) {
@@ -32,7 +27,6 @@ class EmployeeService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def countCompanies(Map params = [:]) {
         Company.count {
             if (params.isActive != null) {
@@ -47,7 +41,6 @@ class EmployeeService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def createCompany(Map<String, Object> data, Long createdBy) {
         Company company = new Company(
             companyName: data.companyName,
@@ -83,7 +76,6 @@ class EmployeeService {
         return company
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def updateCompany(Long id, Map<String, Object> data, Long updatedBy) {
         Company company = Company.get(id)
         if (!company) {
@@ -95,7 +87,6 @@ class EmployeeService {
         return company
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def deleteCompany(Long id) {
         Company company = Company.get(id)
         if (!company) {
@@ -104,12 +95,10 @@ class EmployeeService {
         company.delete(flush: true)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getDepartmentById(Long id) {
         return Department.get(id)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listDepartments(Long companyId, Map params = [:]) {
         Department.withCriteria {
             eq('company', Company.get(companyId))
@@ -134,7 +123,6 @@ class EmployeeService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def countDepartments(Long companyId, Map params = [:]) {
         Department.count {
             eq('company', Company.get(companyId))
@@ -149,7 +137,6 @@ class EmployeeService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def createDepartment(Long companyId, Map<String, Object> data, Long createdBy) {
         Department dept = new Department(
             name: data.name,
@@ -165,7 +152,6 @@ class EmployeeService {
         return dept
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def updateDepartment(Long id, Map<String, Object> data) {
         Department dept = Department.get(id)
         if (!dept) {
@@ -176,12 +162,10 @@ class EmployeeService {
         return dept
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getDesignationById(Long id) {
         return Designation.get(id)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listDesignations(Long companyId, Map params = [:]) {
         Designation.withCriteria {
             eq('company', Company.get(companyId))
@@ -204,7 +188,6 @@ class EmployeeService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def createDesignation(Long companyId, Map<String, Object> data, Long createdBy) {
         Designation designation = new Designation(
             name: data.name,
@@ -221,12 +204,10 @@ class EmployeeService {
         return designation
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getEmployeeById(Long id) {
         return Employee.get(id)
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def listEmployees(Long companyId, Map params = [:]) {
         Employee.withCriteria {
             eq('company', Company.get(companyId))
@@ -262,12 +243,10 @@ class EmployeeService {
         }
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def countEmployees(Long companyId, Map params = [:]) {
         return Employee.countByCompany(Company.get(companyId))
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def createEmployee(Long companyId, Map<String, Object> data, Long createdBy) {
         Employee employee = new Employee(
             employeeCode: data.employeeCode,
@@ -345,7 +324,6 @@ class EmployeeService {
         return employee
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def updateEmployee(Long id, Map<String, Object> data, Long updatedBy) {
         Employee employee = Employee.get(id)
         if (!employee) {
@@ -357,7 +335,6 @@ class EmployeeService {
         return employee
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def terminateEmployee(Long id, Map<String, Object> data, Long updatedBy) {
         Employee employee = Employee.get(id)
         if (!employee) {
@@ -371,7 +348,6 @@ class EmployeeService {
         return employee
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def rehireEmployee(Long id, Long updatedBy) {
         Employee employee = Employee.get(id)
         if (!employee) {
@@ -385,7 +361,6 @@ class EmployeeService {
         return employee
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getAttendanceStats(Long companyId, Integer year, Integer month) {
         Date from = Date.valueOf(LocalDate.of(year, month, 1))
         Date to = Date.valueOf(LocalDate.of(year, month, 1).plusMonths(1).minusDays(1))
@@ -419,7 +394,6 @@ class EmployeeService {
         return stats
     }
 
-    @CompileStatic(TypeCheckingMode.SKIP)
     def getLeaveStats(Long companyId, Integer year, Integer month) {
         Date from = Date.valueOf(LocalDate.of(year, month, 1))
         Date to = Date.valueOf(LocalDate.of(year, month, 1).plusMonths(1).minusDays(1))
