@@ -8,7 +8,7 @@ buildscript {
     dependencies {
         classpath platform("org.apache.grails:grails-bom:$grailsVersion")
         classpath "org.apache.grails:grails-gradle-plugins"
-     //  classpath "org.apache.grails:grails-data-hibernate5"
+  //   classpath "org.apache.grails:grails-data-hibernate5"
         classpath "cloud.wondrify:asset-pipeline-gradle"
     }
 }
@@ -56,8 +56,8 @@ dependencies {
     integrationTestImplementation testFixtures("org.apache.grails:grails-geb")
     profile "org.apache.grails.profiles:web"
     runtimeOnly "org.fusesource.jansi:jansi"
-    runtimeOnly "com.h2database:h2"
-   // runtimeOnly "com.zaxxer:HikariCP"
+    //runtimeOnly "com.h2database:h2"
+    //runtimeOnly "com.zaxxer:HikariCP"
     runtimeOnly "cloud.wondrify:asset-pipeline-grails"
     testAndDevelopmentOnly "org.webjars.npm:bootstrap"
     testAndDevelopmentOnly "org.webjars.npm:bootstrap-icons"
