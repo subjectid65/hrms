@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 import java.math.BigDecimal
 
@@ -28,6 +29,7 @@ class Expense {
     LocalDate updatedAt
     Long createdBy
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         employee nullable: false
         expenseType blank: false, maxSize: 100
@@ -48,6 +50,7 @@ class Expense {
         isActive nullable: false
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'expense'
         id column: 'expense_id', generator: 'native'

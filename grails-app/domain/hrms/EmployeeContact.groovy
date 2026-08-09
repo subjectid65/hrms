@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 
 @CompileStatic
@@ -20,6 +21,7 @@ class EmployeeContact {
     LocalDate updatedAt
     Long createdBy
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         employee nullable: false
         relation maxSize: 50
@@ -33,6 +35,7 @@ class EmployeeContact {
         isPrimary nullable: false
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'employee_contact'
         id column: 'employee_contact_id', generator: 'native'

@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
@@ -8,6 +9,7 @@ import java.time.LocalDate
 @Transactional
 class CompanySettingService {
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def listSettings(Long companyId) {
         return CompanySetting.findAll {
             eq('company', Company.get(companyId))
@@ -15,6 +17,7 @@ class CompanySettingService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getSetting(Long companyId, String key) {
         return CompanySetting.find {
             eq('company', Company.get(companyId))
@@ -22,6 +25,7 @@ class CompanySettingService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def updateSetting(Long companyId, String key, Map<String, Object> data) {
         CompanySetting setting = CompanySetting.find {
             eq('company', Company.get(companyId))
@@ -67,6 +71,7 @@ class CompanySettingService {
         ]
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def initializeDefaultSettings(Long companyId) {
         List<Map> defaults = getDefaultSettings(companyId)
         Company company = Company.get(companyId)

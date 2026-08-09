@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 
 @CompileStatic
@@ -18,6 +19,7 @@ class OnboardingTask {
     LocalDate updatedAt
     Long createdBy
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         name blank: false, maxSize: 200
         description maxSize: 1000, nullable: true
@@ -29,6 +31,7 @@ class OnboardingTask {
         completedDate nullable: true
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'onboarding_task'
         id column: 'onboarding_task_id', generator: 'native'

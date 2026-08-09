@@ -2,6 +2,7 @@ package hrms
 
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import grails.converters.JSON
@@ -17,11 +18,13 @@ class PayrollController {
         render view: 'index', model: [title: 'HRMS - Payroll Management']
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def listComponents(Long companyId) {
         def components = payrollService.listSalaryComponents(companyId)
         render JSON.encodeAsJSON(components)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def createComponent(Long companyId) {
         try {
             def component = payrollService.createSalaryComponent(companyId, request.JSON, session?.user?.id)
@@ -33,12 +36,14 @@ class PayrollController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def listPayslips(Long companyId, Integer year, Integer month) {
         def payslips = payrollService.listPayslips(companyId, params)
         def total = payrollService.countPayslips(companyId, params)
         render JSON.encodeAsJSON([payslips: payslips, total: total])
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def show(Long companyId, Long id) {
         def payslip = payrollService.getPayslipById(id)
         if (!payslip || payslip.employee.company.id != companyId) {
@@ -49,6 +54,7 @@ class PayrollController {
         render JSON.encodeAsJSON(payslip)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def generate(Long companyId, Long employeeId, Integer year, Integer month) {
         try {
             def payslip = payrollService.generatePayslip(employeeId, year, month, session?.user?.id)
@@ -60,6 +66,7 @@ class PayrollController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def approve(Long id) {
         try {
             def payslip = payrollService.approvePayslip(id)
@@ -70,6 +77,7 @@ class PayrollController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def reject(Long id) {
         try {
             def payslip = payrollService.rejectPayslip(id, params.reason)
@@ -80,6 +88,7 @@ class PayrollController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def summary(Long companyId, Integer year, Integer month) {
         def summary = payrollService.getPayrollSummary(companyId, year, month)
         render JSON.encodeAsJSON(summary)

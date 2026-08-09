@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 
 @CompileStatic
@@ -20,6 +21,7 @@ class LeaveType {
     LocalDate updatedAt
     Long createdBy
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         name blank: false, maxSize: 100
         code blank: false, maxSize: 20
@@ -33,6 +35,7 @@ class LeaveType {
         isActive nullable: false
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'leave_type'
         id column: 'leave_type_id', generator: 'native'

@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
@@ -8,6 +9,7 @@ import java.time.LocalDate
 @Transactional
 class UserService {
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def login(String username, String password) {
         User user = User.findByUsername(username)
         if (!user || !user.enabled) {
@@ -25,6 +27,7 @@ class UserService {
         return [success: true, user: user, token: token]
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def register(Map<String, Object> data) {
         if (User.existsByUsername(data.username)) {
             throw new Exception('Username already exists')
@@ -57,6 +60,7 @@ class UserService {
         return user
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def updateProfile(Long userId, Map<String, Object> data) {
         User user = User.get(userId)
         if (!user) {
@@ -70,6 +74,7 @@ class UserService {
         return user
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def changePassword(Long userId, String oldPassword, String newPassword) {
         User user = User.get(userId)
         if (!user) {
@@ -83,6 +88,7 @@ class UserService {
         return user
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def listUsers(Long companyId) {
         return User.findAll {
             eq('company', Company.get(companyId))

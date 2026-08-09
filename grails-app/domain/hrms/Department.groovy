@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 
 @CompileStatic
@@ -19,6 +20,7 @@ class Department {
 
     static transients = []
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         name blank: false, maxSize: 100
         code blank: false, maxSize: 20
@@ -27,13 +29,14 @@ class Department {
         parentDepartment nullable: true
         sortOrder nullable: true
         isActive nullable: false
-        code validator: { val, obj ->
+        code validator: @CompileStatic(TypeCheckingMode.SKIP) { val, obj ->
             if (Department.countByCompanyAndCode(obj.company, val) > 0) {
                 return 'department.code.exists'
             }
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'department'
         id column: 'department_id', generator: 'native'

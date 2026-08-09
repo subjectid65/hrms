@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 
 @CompileStatic
@@ -39,6 +40,7 @@ class Company {
 
     static transients = ['logoUrl', 'primaryColor', 'secondaryColor']
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         companyName blank: false, maxSize: 200
         companyCode blank: false, maxSize: 20, unique: true
@@ -55,6 +57,7 @@ class Company {
         isActive nullable: false
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'company'
         id column: 'company_id', generator: 'native'

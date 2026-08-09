@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -15,6 +16,7 @@ class InitializationService implements InitializingBean {
         seedData()
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void seedData() {
         // Seed default company if none exists
         if (Company.count() == 0) {
@@ -63,6 +65,7 @@ class InitializationService implements InitializingBean {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void seedDepartments(Company company) {
         def departments = [
             [name: 'Human Resources', code: 'HR', description: 'HR Department'],
@@ -89,6 +92,7 @@ class InitializationService implements InitializingBean {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void seedSalaryComponents(Company company) {
         def components = [
             [name: 'Basic Salary', code: 'BASIC_SALARY', componentType: 'EARNING', defaultValue: null, isStatutory: false],
@@ -124,6 +128,7 @@ class InitializationService implements InitializingBean {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void seedLeaveTypes(Company company) {
         def leaveTypes = [
             [name: 'Annual Leave', code: 'ANNUAL', maxDaysPerYear: 30, isPaid: true, accrues: true, accrualRate: 2.5],
@@ -156,6 +161,7 @@ class InitializationService implements InitializingBean {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void seedAdminUser(Company company) {
         if (!User.existsByUsername('admin')) {
             User admin = new User(
@@ -179,6 +185,7 @@ class InitializationService implements InitializingBean {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private void seedSampleEmployees(Company company) {
         if (Employee.count() > 0) return
 

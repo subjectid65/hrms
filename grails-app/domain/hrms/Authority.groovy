@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
@@ -11,10 +12,12 @@ class Authority {
 
     String authority
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         authority blank: false, maxSize: 50, unique: true
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'authority'
         id column: 'authority_id', generator: 'native'

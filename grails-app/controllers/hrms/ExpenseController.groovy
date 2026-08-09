@@ -2,6 +2,7 @@ package hrms
 
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import grails.converters.JSON
@@ -17,12 +18,14 @@ class ExpenseController {
         render view: 'index', model: [title: 'HRMS - Expense Management']
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def list(Long companyId) {
         def expenses = expenseService.listExpenses(companyId, params)
         def total = expenseService.countExpenses(companyId, params)
         render JSON.encodeAsJSON([expenses: expenses, total: total, offset: params.offset, max: params.max])
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def show(Long companyId, Long id) {
         def expense = expenseService.getExpenseById(id)
         if (!expense || expense.employee.company.id != companyId) {
@@ -33,6 +36,7 @@ class ExpenseController {
         render JSON.encodeAsJSON(expense)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def create(Long companyId) {
         try {
             def expense = expenseService.createExpense(companyId, request.JSON, session?.user?.id)
@@ -44,6 +48,7 @@ class ExpenseController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def approve(Long companyId, Long id) {
         try {
             def expense = expenseService.approveExpense(id, request.JSON, session?.user?.id)
@@ -54,6 +59,7 @@ class ExpenseController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def reject(Long companyId, Long id) {
         try {
             def expense = expenseService.rejectExpense(id, params.reason, session?.user?.id)
@@ -64,6 +70,7 @@ class ExpenseController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def pay(Long companyId, Long id) {
         try {
             def expense = expenseService.processPayment(id, params.paymentMethod, session?.user?.id)
@@ -74,6 +81,7 @@ class ExpenseController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def summary(Long companyId, Integer year, Integer month) {
         def summary = expenseService.getExpenseSummary(companyId, year, month)
         render JSON.encodeAsJSON(summary)

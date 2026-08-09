@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -19,6 +20,7 @@ class AttendanceLog {
     LocalDate createdAt
     Long createdBy
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         employee nullable: false
         logDate nullable: false
@@ -31,6 +33,7 @@ class AttendanceLog {
         remarks maxSize: 500, nullable: true
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'attendance_log'
         id column: 'attendance_log_id', generator: 'native'

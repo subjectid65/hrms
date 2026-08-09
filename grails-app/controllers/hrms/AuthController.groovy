@@ -2,6 +2,7 @@ package hrms
 
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import grails.converters.JSON
@@ -13,6 +14,7 @@ class AuthController {
 
     UserService userService
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def login() {
         try {
             def result = userService.login(params.username, params.password)
@@ -35,11 +37,13 @@ class AuthController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def logout() {
         session.invalidate()
         render JSON.encodeAsJSON([success: true, message: 'Logged out successfully'])
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def register() {
         try {
             def user = userService.register(request.JSON)
@@ -51,6 +55,7 @@ class AuthController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def profile() {
         if (session.currentUser) {
             render JSON.encodeAsJSON(session.currentUser)
@@ -60,6 +65,7 @@ class AuthController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def updateProfile() {
         try {
             def user = userService.updateProfile(session.currentUser.id, request.JSON)
@@ -71,6 +77,7 @@ class AuthController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def changePassword() {
         try {
             userService.changePassword(session.currentUser.id, params.oldPassword, params.newPassword)

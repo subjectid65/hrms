@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 
 @CompileStatic
 class UserAuthority {
@@ -8,11 +9,13 @@ class UserAuthority {
     User user
     Authority authority
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static constraints = {
         user nullable: false
         authority nullable: false
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     static mapping = {
         table 'user_authority'
         id column: 'user_authority_id', generator: 'native'

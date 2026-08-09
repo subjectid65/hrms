@@ -2,6 +2,7 @@ package hrms
 
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import grails.converters.JSON
@@ -18,6 +19,7 @@ class AttendanceController {
         render view: 'index', model: [title: 'HRMS - Attendance Management']
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def checkIn(Long companyId, Long employeeId) {
         try {
             def log = attendanceService.checkIn(
@@ -36,6 +38,7 @@ class AttendanceController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def checkOut(Long companyId, Long employeeId) {
         try {
             def log = attendanceService.checkOut(
@@ -54,23 +57,27 @@ class AttendanceController {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def daily(Long companyId, Integer year, Integer month, Integer day) {
         LocalDate date = LocalDate.of(year, month, day)
         def records = attendanceService.getDailyAttendance(companyId, date)
         render JSON.encodeAsJSON(records)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def monthly(Long companyId, Integer year, Integer month) {
         def records = attendanceService.getMonthlyAttendance(companyId, year, month)
         def report = attendanceService.getAttendanceReport(companyId, year, month)
         render JSON.encodeAsJSON([records: records, report: report])
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def employee(Long companyId, Long employeeId, Integer year, Integer month) {
         def records = attendanceService.getEmployeeAttendance(employeeId, year, month)
         render JSON.encodeAsJSON(records)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def approve(Long recordId) {
         try {
             def record = attendanceService.approveAttendance(

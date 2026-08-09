@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalTime
@@ -9,6 +10,7 @@ import java.time.LocalTime
 @Transactional
 class AttendanceService {
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def checkIn(Long employeeId, String source, String deviceType, String location, String ipAddress, Long userId) {
         Employee employee = Employee.get(employeeId)
         if (!employee) {
@@ -48,6 +50,7 @@ class AttendanceService {
         return log
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def checkOut(Long employeeId, String source, String deviceType, String location, String ipAddress, Long userId) {
         Employee employee = Employee.get(employeeId)
         if (!employee) {
@@ -86,6 +89,7 @@ class AttendanceService {
         return log
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getDailyAttendance(Long companyId, LocalDate date) {
         return AttendanceRecord.findAll {
             eq('employee.company', Company.get(companyId))
@@ -93,6 +97,7 @@ class AttendanceService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getMonthlyAttendance(Long companyId, Integer year, Integer month) {
         LocalDate from = LocalDate.of(year, month, 1)
         LocalDate to = from.plusMonths(1).minusDays(1)
@@ -102,6 +107,7 @@ class AttendanceService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getEmployeeAttendance(Long employeeId, Integer year, Integer month) {
         LocalDate from = LocalDate.of(year, month, 1)
         LocalDate to = from.plusMonths(1).minusDays(1)
@@ -111,6 +117,7 @@ class AttendanceService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def approveAttendance(Long recordId, String status, String remarks, Long approvedBy) {
         AttendanceRecord record = AttendanceRecord.get(recordId)
         if (!record) {
@@ -122,6 +129,7 @@ class AttendanceService {
         return record
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getAttendanceReport(Long companyId, Integer year, Integer month) {
         def records = getMonthlyAttendance(companyId, year, month)
 

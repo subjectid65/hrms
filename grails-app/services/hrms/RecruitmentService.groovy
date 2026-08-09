@@ -1,6 +1,7 @@
 package hrms
 
 import groovy.transform.CompileStatic
+import groovy.transform.TypeCheckingMode
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -9,6 +10,7 @@ import java.time.LocalDateTime
 @Transactional
 class RecruitmentService {
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def createJobPosting(Long companyId, Map<String, Object> data, Long postedBy) {
         JobPosting posting = new JobPosting(
             title: data.title,
@@ -34,6 +36,7 @@ class RecruitmentService {
         return posting
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def listJobPostings(Long companyId, Map params = [:]) {
         JobPosting.withCriteria {
             eq('company', Company.get(companyId))
@@ -56,6 +59,7 @@ class RecruitmentService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def countJobPostings(Long companyId, Map params = [:]) {
         return JobPosting.count {
             eq('company', Company.get(companyId))
@@ -75,10 +79,12 @@ class RecruitmentService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getJobPostingById(Long id) {
         return JobPosting.get(id)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def updateJobPosting(Long id, Map<String, Object> data) {
         JobPosting posting = JobPosting.get(id)
         if (!posting) {
@@ -89,6 +95,7 @@ class RecruitmentService {
         return posting
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def createCandidate(Long companyId, Map<String, Object> data, Long assignedTo) {
         Candidate candidate = new Candidate(
             firstName: data.firstName,
@@ -118,6 +125,7 @@ class RecruitmentService {
         return candidate
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def listCandidates(Long companyId, Map params = [:]) {
         Candidate.withCriteria {
             if (params.jobPostingId) {
@@ -142,6 +150,7 @@ class RecruitmentService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def countCandidates(Long companyId, Map params = [:]) {
         return Candidate.count {
             if (params.jobPostingId) {
@@ -163,10 +172,12 @@ class RecruitmentService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getCandidateById(Long id) {
         return Candidate.get(id)
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def updateCandidate(Long id, Map<String, Object> data) {
         Candidate candidate = Candidate.get(id)
         if (!candidate) {
@@ -177,6 +188,7 @@ class RecruitmentService {
         return candidate
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def convertCandidateToEmployee(Long candidateId, Long companyId, Map<String, Object> data, Long createdBy) {
         Candidate candidate = Candidate.get(candidateId)
         if (!candidate) {
@@ -215,6 +227,7 @@ class RecruitmentService {
         return employee
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def createOnboardingTasks(Employee employee, Long createdBy) {
         List<String> defaultTasks = [
             'Complete probation documentation',
@@ -241,6 +254,7 @@ class RecruitmentService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getOnboardingTasks(Long employeeId) {
         return OnboardingTask.findAll {
             eq('employee', Employee.get(employeeId))
@@ -248,6 +262,7 @@ class RecruitmentService {
         }
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     def completeOnboardingTask(Long taskId, Long completedBy) {
         OnboardingTask task = OnboardingTask.get(taskId)
         if (!task) {
@@ -259,6 +274,7 @@ class RecruitmentService {
         return task
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
     private String generateEmployeeCode(Long companyId) {
         Company company = Company.get(companyId)
         String prefix = company?.companyCode ?: 'EMP'
@@ -266,6 +282,8 @@ class RecruitmentService {
         return "${prefix}${String.format('%04d', count + 1)}"
     }
 
+    @CompileStatic(TypeCheckingMode.SKIP)
+    @CompileStatic(TypeCheckingMode.SKIP)
     def getRecruitmentStats(Long companyId) {
         def stats = [
             totalPostings: JobPosting.count { eq('company', Company.get(companyId)) },
