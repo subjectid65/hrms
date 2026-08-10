@@ -1,5 +1,5 @@
 const API = '/api/v1';
-let currentCompanyId = parseInt(document.querySelector('meta[name="company-id"]')?.content || '1');
+let currentCompanyId = parseInt(sessionStorage.getItem('companyId') || document.querySelector('meta[name="company-id"]')?.content || '1');
 
 function showSection(name) {
     document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
@@ -11,6 +11,7 @@ function showSection(name) {
     if (name === 'dashboard') loadDashboard();
     if (name === 'employees') loadEmployees();
     if (name === 'departments') loadDepartments();
+    if (name === 'designations') loadDesignations();
     if (name === 'attendance') loadAttendance();
     if (name === 'payroll') loadPayroll();
     if (name === 'expenses') loadExpenses();
@@ -123,6 +124,26 @@ async function loadDepartments() {
                 html += '<td>' + (d.code || '-') + '</td>';
                 html += '<td>' + (d.name || '-') + '</td>';
                 html += '<td>-</td>';
+                html += '<td><span class="badge ' + (d.isActive ? 'badge-success' : 'badge-danger') + '">' + (d.isActive ? 'Active' : 'Inactive') + '</span></td>';
+                html += '</tr>';
+            }
+            tbody.innerHTML = html;
+        }
+    } catch(e) { console.log(e); }
+}
+
+async function loadDesignations() {
+    try {
+        const data = await api(API + '/companies/' + currentCompanyId + '/designations');
+        const tbody = document.getElementById('designation-list');
+        if (data) {
+            let html = '';
+            for (let i = 0; i < data.length; i++) {
+                const d = data[i];
+                html += '<tr>';
+                html += '<td>' + (d.code || '-') + '</td>';
+                html += '<td>' + (d.name || '-') + '</td>';
+                html += '<td>' + (d.department ? d.department.name : '-') + '</td>';
                 html += '<td><span class="badge ' + (d.isActive ? 'badge-success' : 'badge-danger') + '">' + (d.isActive ? 'Active' : 'Inactive') + '</span></td>';
                 html += '</tr>';
             }
@@ -252,6 +273,20 @@ async function saveDepartment(e) {
         const result = await api(API + '/companies/' + currentCompanyId + '/departments', { method: 'POST', body: JSON.stringify(obj) });
         if (result.department) { closeModal('department-modal'); loadDepartments(); }
         else alert(result.message || 'Failed to create department');
+    } catch(err) {
+        alert('Error: ' + (err.message || 'Unknown error'));
+    }
+}
+
+async function saveDesignation(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    const obj = Object.fromEntries(data);
+    try {
+        const result = await api(API + '/companies/' + currentCompanyId + '/designations', { method: 'POST', body: JSON.stringify(obj) });
+        if (result.designation) { closeModal('designation-modal'); loadDesignations(); }
+        else alert(result.message || 'Failed to create designation');
     } catch(err) {
         alert('Error: ' + (err.message || 'Unknown error'));
     }

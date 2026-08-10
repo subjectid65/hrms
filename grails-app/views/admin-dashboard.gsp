@@ -82,6 +82,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
                 Departments
             </a>
+            <a class="nav-item" onclick="showSection('designations')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Designations
+            </a>
             <div class="nav-section">Attendance</div>
             <a class="nav-item" onclick="showSection('attendance')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -125,8 +129,9 @@
         <div class="top-bar">
             <h1 id="page-title">Dashboard</h1>
             <div class="user-info">
-                <span id="user-name-display">Admin Demo</span>
-                <div class="user-avatar" id="user-avatar-display">A</div>
+                <span id="company-badge" style="background:#1a237e;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;margin-right:8px">${session.currentUser?.company?.companyName ?: 'No Company'}</span>
+                <span id="user-name-display">${session.currentUser?.getFullName() ?: 'Admin Demo'}</span>
+                <div class="user-avatar" id="user-avatar-display">${session.currentUser?.firstName?.charAt(0) ?: 'A'}</div>
             </div>
         </div>
 
@@ -168,6 +173,19 @@
                 <table>
                     <thead><tr><th>Code</th><th>Name</th><th>Employees</th><th>Status</th></tr></thead>
                     <tbody id="department-list"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="designations-section" class="section" style="display:none">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                    <h2 style="margin:0">Designations</h2>
+                    <button class="btn btn-primary" onclick="openModal('designation-modal')">+ Add Designation</button>
+                </div>
+                <table>
+                    <thead><tr><th>Code</th><th>Name</th><th>Department</th><th>Status</th></tr></thead>
+                    <tbody id="designation-list"></tbody>
                 </table>
             </div>
         </div>

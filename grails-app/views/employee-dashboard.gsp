@@ -98,8 +98,9 @@
         <div class="top-bar">
             <h1 id="page-title">Dashboard</h1>
             <div class="user-info">
-                <span id="user-name-display">Employee Demo</span>
-                <div class="user-avatar" id="user-avatar-display">E</div>
+                <span id="company-badge" style="background:#4a148c;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;margin-right:8px">${session.currentUser?.company?.companyName ?: 'No Company'}</span>
+                <span id="user-name-display">${session.currentUser?.getFullName() ?: 'Employee Demo'}</span>
+                <div class="user-avatar" id="user-avatar-display">${session.currentUser?.firstName?.charAt(0) ?: 'E'}</div>
             </div>
         </div>
 

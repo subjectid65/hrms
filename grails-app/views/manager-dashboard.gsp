@@ -78,6 +78,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
                 My Team
             </a>
+            <a class="nav-item" onclick="showSection('designations')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Designations
+            </a>
             <div class="nav-section">Time</div>
             <a class="nav-item" onclick="showSection('attendance')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -98,8 +102,9 @@
         <div class="top-bar">
             <h1 id="page-title">Dashboard</h1>
             <div class="user-info">
-                <span id="user-name-display">Manager Demo</span>
-                <div class="user-avatar" id="user-avatar-display">M</div>
+                <span id="company-badge" style="background:#e65100;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;margin-right:8px">${session.currentUser?.company?.companyName ?: 'No Company'}</span>
+                <span id="user-name-display">${session.currentUser?.getFullName() ?: 'Manager Demo'}</span>
+                <div class="user-avatar" id="user-avatar-display">${session.currentUser?.firstName?.charAt(0) ?: 'M'}</div>
             </div>
         </div>
 
