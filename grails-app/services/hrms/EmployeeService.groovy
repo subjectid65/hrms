@@ -103,7 +103,7 @@ class EmployeeService {
             if (all.isEmpty()) return []
             company = all.get(0)
         }
-        def results = Employee.findAll([company: company])
+        def results = Employee.findAllByCompany(company)
         if (params.search) {
             results = results.findAll { it.firstName?.toLowerCase().contains(params.search) || it.lastName?.toLowerCase().contains(params.search) || it.employeeCode?.toLowerCase().contains(params.search) }
         }
@@ -299,7 +299,7 @@ class EmployeeService {
             }
             company = all.get(0)
         }
-        def results = Department.findAll([company: company])
+        def results = Department.findAllByCompany(company)
         if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
         results = results.sort { it.sortOrder ?: 0 }
         def offset = (params.offset ?: 0) as int
@@ -316,10 +316,11 @@ class EmployeeService {
             }
             company = all.get(0)
         }
+        def deptList = Department.findAllByCompany(company)
         if (params.isActive != null) {
-            return Department.findAll([company: company, isActive: params.isActive]).size() ?: 0
+            deptList = deptList.findAll { it.isActive == params.isActive }
         }
-        return Department.findAll([company: company]).size() ?: 0
+        return deptList.size() ?: 0
     }
 
     def createDepartment(Long companyId, Map<String, Object> data, Long createdBy) {
@@ -363,7 +364,7 @@ class EmployeeService {
     def listDesignations(Long companyId, Map params = [:]) {
         def company = Company.findById(companyId) ?: Company.findAll().get(0)
         if (!company) return []
-        def results = Designation.findAll([company: company])
+        def results = Designation.findAllByCompany(company)
         if (params.departmentId) results = results.findAll { it.department?.id == params.departmentId as Long }
         if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
         results = results.sort { it.sortOrder ?: 0 }

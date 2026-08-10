@@ -19,7 +19,10 @@ function showSection(name) {
     if (name === 'companies') loadCompanies();
 }
 
-function openModal(id) { document.getElementById(id).classList.add('active'); }
+function openModal(id) { 
+    document.getElementById(id).classList.add('active'); 
+    if (id === 'employee-modal') loadEmployeeModalOptions();
+}
 function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
 async function api(url, options = {}) {
@@ -394,3 +397,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     loadDashboard();
 });
+
+async function loadEmployeeModalOptions() {
+    try {
+        const deptData = await api(API + '/companies/' + currentCompanyId + '/departments?max=200&isActive=true');
+        const deptSelect = document.querySelector('#employee-modal select[name="departmentId"]');
+        if (deptSelect && deptData.departments) {
+            deptSelect.innerHTML = '<option value="">-- Select --</option>';
+            for (let i = 0; i < deptData.departments.length; i++) {
+                const d = deptData.departments[i];
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.name;
+                deptSelect.appendChild(opt);
+            }
+        }
+        const desigData = await api(API + '/companies/' + currentCompanyId + '/designations?max=200&isActive=true');
+        const desigSelect = document.querySelector('#employee-modal select[name="designationId"]');
+        if (desigSelect && Array.isArray(desigData)) {
+            desigSelect.innerHTML = '<option value="">-- Select --</option>';
+            for (let i = 0; i < desigData.length; i++) {
+                const d = desigData[i];
+                const opt = document.createElement('option');
+                opt.value = d.id;
+                opt.textContent = d.name;
+                desigSelect.appendChild(opt);
+            }
+        }
+    } catch(e) { console.log('Failed to load modal options', e); }
+}
