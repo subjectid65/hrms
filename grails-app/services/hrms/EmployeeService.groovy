@@ -13,7 +13,10 @@ class EmployeeService {
 
     def listCompanies(Map params = [:]) {
         def results = Company.findAll()
-        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        if (params.isActive != null) {
+            def activeFilter = params.isActive.toString().toBoolean()
+            results = results.findAll { it.isActive == activeFilter }
+        }
         if (params.search) {
             def s = params.search.toLowerCase()
             results = results.findAll { it.companyName?.toLowerCase().contains(s) || it.companyCode?.toLowerCase().contains(s) }
@@ -26,7 +29,9 @@ class EmployeeService {
 
     def countCompanies(Map params = [:]) {
         def q = [:]
-        if (params.isActive != null) q.isActive = params.isActive
+        if (params.isActive != null) {
+            q.isActive = params.isActive.toString().toBoolean()
+        }
         if (params.search) {
             def s = "%${params.search}%"
             return Company.findAll { companyName =~ ~/.*${params.search}.*/ || companyCode =~ ~/.*${params.search}.*/ }?.size() ?: 0
@@ -109,7 +114,10 @@ class EmployeeService {
         }
         if (params.departmentId) results = results.findAll { it.department?.id == params.departmentId as Long }
         if (params.designationId) results = results.findAll { it.designation?.id == params.designationId as Long }
-        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        if (params.isActive != null) {
+            def activeFilter = params.isActive.toString().toBoolean()
+            results = results.findAll { it.isActive == activeFilter }
+        }
         results = results.sort { it.firstName ?: '' }
         def offset = params.offset ? params.offset.toInteger() : 0
         def max = params.max ? params.max.toInteger() : 50
@@ -126,7 +134,7 @@ class EmployeeService {
         def q = [company: company]
         if (params.departmentId) q.department = Department.get(params.departmentId)
         if (params.designationId) q.designation = Designation.get(params.designationId)
-        if (params.isActive != null) q.isActive = params.isActive
+        if (params.isActive != null) q.isActive = params.isActive.toString().toBoolean()
         return Employee.findAll(q).size()
     }
 
@@ -299,8 +307,12 @@ class EmployeeService {
             }
             company = all.get(0)
         }
+        if (!params) params = [:]
         def results = Department.findAllByCompany(company)
-        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        if (params.isActive != null) {
+            def activeFilter = params.isActive.toString().toBoolean()
+            results = results.findAll { it.isActive == activeFilter }
+        }
         results = results.sort { it.sortOrder ?: 0 }
         def offset = (params.offset ?: 0) as int
         def max = (params.max ?: 50) as int
@@ -318,7 +330,8 @@ class EmployeeService {
         }
         def deptList = Department.findAllByCompany(company)
         if (params.isActive != null) {
-            deptList = deptList.findAll { it.isActive == params.isActive }
+            def activeFilter = params.isActive.toString().toBoolean()
+            deptList = deptList.findAll { it.isActive == activeFilter }
         }
         return deptList.size() ?: 0
     }
@@ -366,7 +379,10 @@ class EmployeeService {
         if (!company) return []
         def results = Designation.findAllByCompany(company)
         if (params.departmentId) results = results.findAll { it.department?.id == params.departmentId as Long }
-        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        if (params.isActive != null) {
+            def activeFilter = params.isActive.toString().toBoolean()
+            results = results.findAll { it.isActive == activeFilter }
+        }
         results = results.sort { it.sortOrder ?: 0 }
         def offset = (params.offset ?: 0) as int
         def max = (params.max ?: 50) as int
