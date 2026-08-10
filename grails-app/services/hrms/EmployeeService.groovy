@@ -12,20 +12,16 @@ class EmployeeService {
     }
 
     def listCompanies(Map params = [:]) {
-        return Company.withCriteria {
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-            if (params.search) {
-                or {
-                    ilike('companyName', "%${params.search}%")
-                    ilike('companyCode', "%${params.search}%")
-                }
-            }
-            order('companyName', 'asc')
-            firstResult params.offset ?: 0
-            maxResults params.max ?: 10
+        def results = Company.findAll()
+        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        if (params.search) {
+            def s = params.search.toLowerCase()
+            results = results.findAll { it.companyName?.toLowerCase().contains(s) || it.companyCode?.toLowerCase().contains(s) }
         }
+        results = results.sort { it.companyName ?: '' }
+        def offset = params.offset ? params.offset.toInteger() : 0
+        def max = params.max ? params.max.toInteger() : 10
+        return results.size() > offset ? results.subList(offset, Math.min(offset + max, results.size())) : []
     }
 
     def countCompanies(Map params = [:]) {
@@ -101,32 +97,32 @@ class EmployeeService {
     }
 
     def listEmployees(Long companyId, Map params = [:]) {
-        return Employee.withCriteria {
-            eq('company', Company.get(companyId))
-            if (params.departmentId) {
-                eq('department', Department.get(params.departmentId))
-            }
-            if (params.designationId) {
-                eq('designation', Designation.get(params.designationId))
-            }
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-            if (params.search) {
-                or {
-                    ilike('firstName', "%${params.search}%")
-                    ilike('lastName', "%${params.search}%")
-                    ilike('employeeCode', "%${params.search}%")
-                }
-            }
-            order('firstName', 'asc')
-            firstResult params.offset ?: 0
-            maxResults params.max ?: 50
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) return []
+            company = all.get(0)
         }
+        def results = Employee.findAll { company == it.company }
+        if (params.search) {
+            results = results.findAll { it.firstName?.toLowerCase().contains(params.search) || it.lastName?.toLowerCase().contains(params.search) || it.employeeCode?.toLowerCase().contains(params.search) }
+        }
+        if (params.departmentId) results = results.findAll { it.department?.id == params.departmentId as Long }
+        if (params.designationId) results = results.findAll { it.designation?.id == params.designationId as Long }
+        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        results = results.sort { it.firstName ?: '' }
+        def offset = params.offset ? params.offset.toInteger() : 0
+        def max = params.max ? params.max.toInteger() : 50
+        return results.size() > offset ? results.subList(offset, Math.min(offset + max, results.size())) : []
     }
 
     def countEmployees(Long companyId, Map params = [:]) {
-        def company = Company.get(companyId)
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) return 0
+            company = all.get(0)
+        }
         def q = [company: company]
         if (params.departmentId) q.department = Department.get(params.departmentId)
         if (params.designationId) q.designation = Designation.get(params.designationId)
@@ -272,7 +268,7 @@ class EmployeeService {
         Date toDate = Date.valueOf(to)
 
         return [
-            totalDays: Employee.findAll { company == Company.get(companyId) }?.size() as Long,
+            totalDays: { def c = Company.findById(companyId) ?: Company.findAll().get(0); c ? Employee.findAll { company == c }?.size() : 0 } as Long,
             present: 0,
             absent: 0,
             late: 0,
@@ -295,31 +291,43 @@ class EmployeeService {
     }
 
     def listDepartments(Long companyId, Map params = [:]) {
-        return Department.withCriteria {
-            eq('company', Company.get(companyId))
-            if (params.parentDepartmentId) {
-                eq('parentDepartment', Department.get(params.parentDepartmentId))
-            } else {
-                eq('parentDepartment', null)
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) {
+                throw new NoSuchElementException("No company found for companyId: ${companyId}")
             }
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-            order('sortOrder', 'asc')
-            order('name', 'asc')
-            firstResult params.offset ?: 0
-            maxResults params.max ?: 50
+            company = all.get(0)
         }
+        def results = Department.findAll { company == it.company }
+        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        results = results.sort { it.sortOrder ?: 0 }
+        def offset = (params.offset ?: 0) as int
+        def max = (params.max ?: 50) as int
+        return results.size() > offset ? results.subList(offset, Math.min(offset + max, results.size())) : []
     }
 
     def countDepartments(Long companyId, Map params = [:]) {
-        def company = Company.get(companyId)
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) {
+                throw new NoSuchElementException("No company found for companyId: ${companyId}")
+            }
+            company = all.get(0)
+        }
         return Department.findAll { company == it.company && isActive == (params.isActive != false) }?.size() ?: 0
     }
 
     def createDepartment(Long companyId, Map<String, Object> data, Long createdBy) {
-        def company = Company.findById(companyId) ?: Company.findAll().get(0)
-        if (!company) throw new NoSuchElementException("No company found for companyId: ${companyId}")
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) {
+                throw new NoSuchElementException("No company found for companyId: ${companyId}")
+            }
+            company = all.get(0)
+        }
         Department department = new Department(
             name: data.name,
             code: data.code,
@@ -350,19 +358,15 @@ class EmployeeService {
     }
 
     def listDesignations(Long companyId, Map params = [:]) {
-        return Designation.withCriteria {
-            eq('company', Company.get(companyId))
-            if (params.departmentId) {
-                eq('department', Department.get(params.departmentId))
-            }
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-            order('sortOrder', 'asc')
-            order('name', 'asc')
-            firstResult params.offset ?: 0
-            maxResults params.max ?: 50
-        }
+        def company = Company.findById(companyId) ?: Company.findAll().get(0)
+        if (!company) return []
+        def results = Designation.findAll { company == it.company }
+        if (params.departmentId) results = results.findAll { it.department?.id == params.departmentId as Long }
+        if (params.isActive != null) results = results.findAll { it.isActive == params.isActive }
+        results = results.sort { it.sortOrder ?: 0 }
+        def offset = (params.offset ?: 0) as int
+        def max = (params.max ?: 50) as int
+        return results.size() > offset ? results.subList(offset, Math.min(offset + max, results.size())) : []
     }
 
     def createDesignation(Long companyId, Map<String, Object> data, Long createdBy) {

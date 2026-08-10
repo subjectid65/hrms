@@ -30,10 +30,16 @@ async function login(e) {
     e.preventDefault();
     const form = e.target;
     const role = form.role.value;
-    const data = { role: role };
+    const companyId = form.companyId.value;
+    if (!companyId) {
+        alert('Please select a company');
+        return;
+    }
+    const data = { role: role, companyId: companyId };
     const result = await api(API + '/auth/login', { method: 'POST', body: JSON.stringify(data) });
     if (result.success) {
         sessionStorage.setItem('userRole', role);
+        sessionStorage.setItem('companyId', companyId);
         const roleRedirects = {
             admin:    'admin-dashboard',
             hr:       'hr-dashboard',
@@ -301,7 +307,55 @@ function saveSettings() {
     alert('Settings saved! (In production, this would call the API)');
 }
 
+function createCompanyFromLogin() {
+    document.getElementById('create-company-form').style.display = 'block';
+}
+
+function hideCreateCompanyForm() {
+    document.getElementById('create-company-form').style.display = 'none';
+}
+
+async function saveCompanyFromLogin(e) {
+    e.preventDefault();
+    const form = e.target;
+    const data = new FormData(form);
+    const obj = Object.fromEntries(data);
+    const result = await api(API + '/companies', { method: 'POST', body: JSON.stringify(obj) });
+    if (result.company) {
+        alert('Company created: ' + result.company.companyName);
+        hideCreateCompanyForm();
+        loadCompaniesForLogin();
+    } else {
+        alert(result.message || 'Failed to create company');
+    }
+}
+
+async function loadCompaniesForLogin() {
+    const select = document.getElementById('login-company');
+    if (!select) return;
+    try {
+        const data = await api(API + '/companies?max=100');
+        if (data.companies && data.companies.length > 0) {
+            select.innerHTML = '';
+            for (let i = 0; i < data.companies.length; i++) {
+                const c = data.companies[i];
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.companyName + ' (' + c.companyCode + ')';
+                select.appendChild(opt);
+            }
+        } else {
+            select.innerHTML = '<option value="">No companies found - please seed first</option>';
+        }
+    } catch(e) {
+        select.innerHTML = '<option value="">Error loading companies</option>';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.querySelector('.login-container')) return;
+    if (document.querySelector('.login-container')) {
+        loadCompaniesForLogin();
+        return;
+    }
     loadDashboard();
 });

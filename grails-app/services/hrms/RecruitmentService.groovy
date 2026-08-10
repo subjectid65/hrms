@@ -23,13 +23,18 @@ class RecruitmentService {
                 }
             }
             order('postDate', 'desc')
-            firstResult params.offset ?: 0
-            maxResults params.max ?: 20
+            firstResult(params.offset ? params.offset.toInteger() : 0)
+            maxResults(params.max ? params.max.toInteger() : 20)
         }
     }
 
     def countJobPostings(Long companyId, Map params = [:]) {
-        def company = Company.get(companyId)
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) return 0
+            company = all.get(0)
+        }
         def q = [company: company]
         if (params.status) q.status = params.status
         if (params.isActive != null) q.isActive = params.isActive
@@ -96,8 +101,8 @@ class RecruitmentService {
                 }
             }
             order('dateApplied', 'desc')
-            firstResult params.offset ?: 0
-            maxResults params.max ?: 20
+            firstResult(params.offset ? params.offset.toInteger() : 0)
+            maxResults(params.max ? params.max.toInteger() : 20)
         }
     }
 
@@ -199,7 +204,12 @@ class RecruitmentService {
     }
 
     def getRecruitmentStats(Long companyId) {
-        def company = Company.get(companyId)
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) return [totalPostings:0, activePostings:0, totalCandidates:0, pendingCandidates:0, hiredThisMonth:0]
+            company = all.get(0)
+        }
         def postings = JobPosting.findAllByCompany(company)
         def candidates = Candidate.findAll { jobPosting.company == company }
         def startDate = LocalDate.now().withDayOfMonth(1)

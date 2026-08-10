@@ -6,7 +6,7 @@ import java.time.LocalDate
 @Transactional
 class UserService {
 
-    def loginByRole(String role) {
+    def loginByRole(String role, Long companyId) {
         // Each role gets its own unique demo user with role-appropriate data
         String username = role + '_demo_' + System.currentTimeMillis()
         String firstName
@@ -18,6 +18,12 @@ class UserService {
             case 'manager': firstName = 'Manager'; break
             default: firstName = role.capitalize()
         }
+
+        def company = companyId ? Company.findById(companyId) : Company.findAll().get(0)
+        if (!company) {
+            return [success: false, message: 'No company found. Please select a company or seed one first.']
+        }
+
         User user = new User(
             username: username,
             firstName: firstName,
@@ -26,7 +32,7 @@ class UserService {
             phone: '+971-50-000-0000',
             enabled: true,
             isAdmin: isAdmin,
-            company: Company.findAll()[0] ?: null,
+            company: company,
             createdBy: null as Long
         )
         user.save(flush: true, failOnError: true)

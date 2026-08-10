@@ -412,6 +412,11 @@
                 <h1>HRMS</h1>
                 <p>White-Label HR Management System</p>
                 <form onsubmit="login(event)">
+                    <div class="form-group"><label>Select Company</label>
+                        <select name="companyId" id="login-company">
+                            <option value="">-- Select Company --</option>
+                        </select>
+                    </div>
                     <div class="form-group"><label>Select Role</label>
                         <select name="role">
                             <option value="admin">Admin</option>
@@ -421,7 +426,23 @@
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Sign In</button>
+                    <button type="button" class="btn btn-outline" style="width:100%;margin-top:10px" onclick="createCompanyFromLogin()">Create Company</button>
                 </form>
+                <div id="create-company-form" style="display:none;margin-top:20px;border-top:1px solid #eee;padding-top:20px">
+                    <h3 style="color:#1a237e;margin-bottom:16px;font-size:16px">Create Company</h3>
+                    <form onsubmit="saveCompanyFromLogin(event)">
+                        <div class="form-group"><label>Company Name *</label><input name="companyName" required></div>
+                        <div class="form-group"><label>Company Code *</label><input name="companyCode" required></div>
+                        <div class="form-group"><label>Email</label><input name="email" type="email"></div>
+                        <div class="form-group"><label>Phone</label><input name="phoneNumber"></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>City</label><input name="city" value="Dubai"></div>
+                            <div class="form-group"><label>Country</label><input name="country" value="UAE"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Create & Continue</button>
+                        <button type="button" class="btn btn-outline" style="width:100%;margin-top:8px" onclick="hideCreateCompanyForm()">Cancel</button>
+                    </form>
+                </div>
             </div>
         </div>
     </g:else>

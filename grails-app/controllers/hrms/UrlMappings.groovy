@@ -20,6 +20,7 @@ class UrlMappings {
         // Company management
         "/api/v1/companies"(controller: "company", action: "list", method: "GET")
         "/api/v1/companies"(controller: "company", action: "create", method: "POST")
+        "/api/v1/companies/seed"(controller: "company", action: "seed", method: "POST")
         "/api/v1/companies/${id}"(controller: "company", action: "show", method: "GET")
         "/api/v1/companies/${id}"(controller: "company", action: "update", method: "PUT")
         "/api/v1/companies/${id}"(controller: "company", action: "delete", method: "DELETE")

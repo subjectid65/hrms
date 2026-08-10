@@ -50,7 +50,12 @@ class ExpenseService {
     }
 
     def countExpenses(Long companyId, Map params = [:]) {
-        def company = Company.get(companyId)
+        def company = Company.findById(companyId)
+        if (!company) {
+            def all = Company.findAll()
+            if (all.isEmpty()) return 0
+            company = all.get(0)
+        }
         def q = [employee: Employee.findAll { company == it.company }]
         if (params.employeeId) q.employee = Employee.get(params.employeeId)
         if (params.status) q.status = params.status

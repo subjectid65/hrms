@@ -16,7 +16,8 @@ class AuthController {
             session.invalidate()
             def freshSession = request.getSession(true)
             def role = params.role ?: 'admin'
-            def result = userService.loginByRole(role)
+            def companyId = params.companyId ? Long.parseLong(params.companyId.toString()) : null
+            def result = userService.loginByRole(role, companyId)
             if (result.success) {
                 def u = result.user
                 freshSession.currentUser = u
