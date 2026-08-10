@@ -29,10 +29,21 @@ async function api(url, options = {}) {
 async function login(e) {
     e.preventDefault();
     const form = e.target;
-    const data = { role: form.role.value };
+    const role = form.role.value;
+    const data = { role: role };
     const result = await api(API + '/auth/login', { method: 'POST', body: JSON.stringify(data) });
-    if (result.success) location.reload();
-    else alert(result.message || 'Login failed');
+    if (result.success) {
+        sessionStorage.setItem('userRole', role);
+        const roleRedirects = {
+            admin:    'admin-dashboard',
+            hr:       'hr-dashboard',
+            manager:  'manager-dashboard',
+            employee: 'employee-dashboard'
+        };
+        location.href = roleRedirects[role] || 'index.gsp';
+    } else {
+        alert(result.message || 'Login failed');
+    }
 }
 
 function logout() { fetch(API + '/auth/logout', { method: 'POST' }).then(() => location.reload()); }

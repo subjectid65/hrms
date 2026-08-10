@@ -6,6 +6,10 @@ class UrlMappings {
         // Root
         "/"(view: "/index")
         "/index"(view: "/index")
+        "/admin-dashboard"(view: "/admin-dashboard")
+        "/hr-dashboard"(view: "/hr-dashboard")
+        "/manager-dashboard"(view: "/manager-dashboard")
+        "/employee-dashboard"(view: "/employee-dashboard")
         "/api/v1/auth/login"(controller: "auth", action: "login")
         "/api/v1/auth/logout"(controller: "auth", action: "logout")
         "/api/v1/auth/register"(controller: "auth", action: "register")
