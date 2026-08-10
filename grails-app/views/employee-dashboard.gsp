@@ -98,8 +98,8 @@
         <div class="top-bar">
             <h1 id="page-title">Dashboard</h1>
             <div class="user-info">
-                <span>${session.currentUser?.getFullName() ?: session.currentUser?.username}</span>
-                <div class="user-avatar">${session.currentUser?.firstName?.charAt(0) ?: 'U'}</div>
+                <span id="user-name-display">Employee Demo</span>
+                <div class="user-avatar" id="user-avatar-display">E</div>
             </div>
         </div>
 
@@ -184,6 +184,11 @@
     </div>
 
     <script>
+        const roleNames = { admin: 'Admin Demo', hr: 'HR Demo', manager: 'Manager Demo', employee: 'Employee Demo' };
+        const roleAvatars = { admin: 'A', hr: 'H', manager: 'M', employee: 'E' };
+        const role = sessionStorage.getItem('userRole') || 'employee';
+        document.getElementById('user-name-display').textContent = roleNames[role] || role;
+        document.getElementById('user-avatar-display').textContent = roleAvatars[role] || '?';
         async function checkIn() {
             try {
                 const result = await api(API + '/companies/' + currentCompanyId + '/attendance/check-in', { method: 'POST' });

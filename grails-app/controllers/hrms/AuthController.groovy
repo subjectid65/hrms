@@ -13,6 +13,7 @@ class AuthController {
 
     def login() {
         try {
+            session.invalidate()
             def role = params.role ?: 'admin'
             def result = userService.loginByRole(role)
             if (result.success) {
