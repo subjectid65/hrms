@@ -50,24 +50,17 @@ class ExpenseService {
     }
 
     def countExpenses(Long companyId, Map params = [:]) {
-        return Expense.count {
-            eq('employee.company', Company.get(companyId))
-            if (params.employeeId) {
-                eq('employee', Employee.get(params.employeeId))
-            }
-            if (params.status) {
-                eq('status', params.status)
-            }
-            if (params.expenseType) {
-                eq('expenseType', params.expenseType)
-            }
-            if (params.dateFrom) {
-                gte('expenseDate', LocalDate.parse(params.dateFrom))
-            }
-            if (params.dateTo) {
-                lte('expenseDate', LocalDate.parse(params.dateTo))
-            }
+        def company = Company.get(companyId)
+        def q = [employee: Employee.findAll { company == it.company }]
+        if (params.employeeId) q.employee = Employee.get(params.employeeId)
+        if (params.status) q.status = params.status
+        if (params.expenseType) q.expenseType = params.expenseType
+        if (params.dateFrom || params.dateTo) {
+            def from = params.dateFrom ? LocalDate.parse(params.dateFrom) : LocalDate.MIN
+            def to = params.dateTo ? LocalDate.parse(params.dateTo) : LocalDate.MAX
+            q.expenseDate = [from: from, to: to]
         }
+        return Expense.findAll(q)?.size() ?: 0
     }
 
     def getExpenseById(Long id) {

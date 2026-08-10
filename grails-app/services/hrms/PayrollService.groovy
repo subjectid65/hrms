@@ -52,21 +52,18 @@ class PayrollService {
     }
 
     def countPayslips(Long companyId, Map params = [:]) {
-        return Payslip.count {
-            eq('employee.company', Company.get(companyId))
-            if (params.employeeId) {
-                eq('employee', Employee.get(params.employeeId))
-            }
-            if (params.year) {
-                eq('year', params.year as Integer)
-            }
-            if (params.month) {
-                eq('month', params.month as Integer)
-            }
-            if (params.status) {
-                eq('status', params.status)
-            }
+        def company = Company.get(companyId)
+        def q = [:]
+        if (params.employeeId) q.employee = Employee.get(params.employeeId)
+        if (params.year) q.year = params.year as Integer
+        if (params.month) q.month = params.month as Integer
+        if (params.status) q.status = params.status
+        // Filter by company via employee relation
+        if (!params.employeeId) {
+            def employees = Employee.findAll { company == it.company }
+            q.employee = employees
         }
+        return Payslip.findAll(q)?.size() ?: 0
     }
 
     def getPayslipById(Long id) {

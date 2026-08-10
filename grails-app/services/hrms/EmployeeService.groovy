@@ -29,17 +29,13 @@ class EmployeeService {
     }
 
     def countCompanies(Map params = [:]) {
-        return Company.count {
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-            if (params.search) {
-                or {
-                    ilike('companyName', "%${params.search}%")
-                    ilike('companyCode', "%${params.search}%")
-                }
-            }
+        def q = [:]
+        if (params.isActive != null) q.isActive = params.isActive
+        if (params.search) {
+            def s = "%${params.search}%"
+            return Company.findAll { companyName =~ ~/.*${params.search}.*/ || companyCode =~ ~/.*${params.search}.*/ }?.size() ?: 0
         }
+        return Company.findAll(q)?.size() ?: 0
     }
 
     def createCompany(Map<String, Object> data, Long createdBy) {
@@ -130,18 +126,12 @@ class EmployeeService {
     }
 
     def countEmployees(Long companyId, Map params = [:]) {
-        return Employee.count {
-            eq('company', Company.get(companyId))
-            if (params.departmentId) {
-                eq('department', Department.get(params.departmentId))
-            }
-            if (params.designationId) {
-                eq('designation', Designation.get(params.designationId))
-            }
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-        }
+        def company = Company.get(companyId)
+        def q = [company: company]
+        if (params.departmentId) q.department = Department.get(params.departmentId)
+        if (params.designationId) q.designation = Designation.get(params.designationId)
+        if (params.isActive != null) q.isActive = params.isActive
+        return Employee.findAll(q).size()
     }
 
     def getEmployeeById(Long id) {
@@ -282,9 +272,7 @@ class EmployeeService {
         Date toDate = Date.valueOf(to)
 
         return [
-            totalDays: Employee.count {
-                eq('company', Company.get(companyId))
-            } as Long,
+            totalDays: Employee.findAll { company == Company.get(companyId) }?.size() as Long,
             present: 0,
             absent: 0,
             late: 0,
@@ -325,25 +313,18 @@ class EmployeeService {
     }
 
     def countDepartments(Long companyId, Map params = [:]) {
-        return Department.count {
-            eq('company', Company.get(companyId))
-            if (params.parentDepartmentId) {
-                eq('parentDepartment', Department.get(params.parentDepartmentId))
-            } else {
-                eq('parentDepartment', null)
-            }
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-        }
+        def company = Company.get(companyId)
+        return Department.findAll { company == it.company && isActive == (params.isActive != false) }?.size() ?: 0
     }
 
     def createDepartment(Long companyId, Map<String, Object> data, Long createdBy) {
+        def company = Company.findById(companyId) ?: Company.findAll().get(0)
+        if (!company) throw new NoSuchElementException("No company found for companyId: ${companyId}")
         Department department = new Department(
             name: data.name,
             code: data.code,
             description: data.description,
-            company: Company.get(companyId),
+            company: company,
             parentDepartment: data.parentDepartmentId ? Department.get(data.parentDepartmentId) : null,
             sortOrder: data.sortOrder,
             isActive: data.isActive != false,

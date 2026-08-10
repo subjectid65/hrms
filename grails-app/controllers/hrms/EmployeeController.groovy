@@ -38,7 +38,7 @@ class EmployeeController {
             render JSON.encodeAsJSON([message: 'Employee created successfully', employee: employee])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
-            render JSON.encodeAsJSON([message: e.message])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
         }
     }
 
@@ -48,7 +48,7 @@ class EmployeeController {
             render JSON.encodeAsJSON([message: 'Employee updated successfully', employee: employee])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
-            render JSON.encodeAsJSON([message: e.message])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
         }
     }
 
@@ -95,7 +95,7 @@ class EmployeeController {
             render JSON.encodeAsJSON([message: 'Department created successfully', department: dept])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
-            render JSON.encodeAsJSON([message: e.message])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
         }
     }
 

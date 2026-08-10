@@ -409,11 +409,9 @@
             const form = e.target;
             const data = new FormData(form);
             const obj = Object.fromEntries(data);
-            console.log('saveDepartment called, companyId:', currentCompanyId, 'data:', obj);
             const result = await api(API + '/companies/' + currentCompanyId + '/departments', { method: 'POST', body: JSON.stringify(obj) });
-            console.log('saveDepartment result:', result);
             if (result.department) { closeModal('department-modal'); loadDepartments(); }
-            else alert(result.message || 'Failed');
+            else alert(result.message || 'Failed to create department');
         }
         document.addEventListener('DOMContentLoaded', () => { loadDashboard(); });
     </script>

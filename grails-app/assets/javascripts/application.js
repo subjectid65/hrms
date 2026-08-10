@@ -242,9 +242,13 @@ async function saveDepartment(e) {
     const form = e.target;
     const data = new FormData(form);
     const obj = Object.fromEntries(data);
-    const result = await api(API + '/companies/' + currentCompanyId + '/departments', { method: 'POST', body: JSON.stringify(obj) });
-    if (result.department) { closeModal('department-modal'); loadDepartments(); }
-    else alert(result.message || 'Failed');
+    try {
+        const result = await api(API + '/companies/' + currentCompanyId + '/departments', { method: 'POST', body: JSON.stringify(obj) });
+        if (result.department) { closeModal('department-modal'); loadDepartments(); }
+        else alert(result.message || 'Failed to create department');
+    } catch(err) {
+        alert('Error: ' + (err.message || 'Unknown error'));
+    }
 }
 
 async function saveCompany(e) {

@@ -29,15 +29,11 @@ class RecruitmentService {
     }
 
     def countJobPostings(Long companyId, Map params = [:]) {
-        return JobPosting.count {
-            eq('company', Company.get(companyId))
-            if (params.status) {
-                eq('status', params.status)
-            }
-            if (params.isActive != null) {
-                eq('isActive', params.isActive)
-            }
-        }
+        def company = Company.get(companyId)
+        def q = [company: company]
+        if (params.status) q.status = params.status
+        if (params.isActive != null) q.isActive = params.isActive
+        return JobPosting.findAll(q)?.size() ?: 0
     }
 
     def getJobPostingById(Long id) {
@@ -106,17 +102,11 @@ class RecruitmentService {
     }
 
     def countCandidates(Long companyId, Map params = [:]) {
-        return Candidate.count {
-            if (params.jobPostingId) {
-                eq('jobPosting', JobPosting.get(params.jobPostingId))
-            }
-            if (params.status) {
-                eq('status', params.status)
-            }
-            if (params.assignedTo) {
-                eq('assignedTo', User.get(params.assignedTo))
-            }
-        }
+        def q = [:]
+        if (params.jobPostingId) q.jobPosting = JobPosting.get(params.jobPostingId)
+        if (params.status) q.status = params.status
+        if (params.assignedTo) q.assignedTo = User.get(params.assignedTo)
+        return Candidate.findAll(q)?.size() ?: 0
     }
 
     def getCandidateById(Long id) {
@@ -209,25 +199,16 @@ class RecruitmentService {
     }
 
     def getRecruitmentStats(Long companyId) {
-        Long count = Employee.countByCompany(Company.get(companyId))
+        def company = Company.get(companyId)
+        def postings = JobPosting.findAllByCompany(company)
+        def candidates = Candidate.findAll { jobPosting.company == company }
+        def startDate = LocalDate.now().withDayOfMonth(1)
         return [
-            totalPostings: JobPosting.count { eq('company', Company.get(companyId)) },
-            activePostings: JobPosting.count {
-                eq('company', Company.get(companyId))
-                eq('isActive', true)
-            },
-            totalCandidates: Candidate.count {
-                eq('jobPosting.company', Company.get(companyId))
-            },
-            pendingCandidates: Candidate.count {
-                eq('jobPosting.company', Company.get(companyId))
-                eq('status', 'NEW')
-            },
-            hiredThisMonth: Candidate.count {
-                eq('jobPosting.company', Company.get(companyId))
-                eq('status', 'HIRED')
-                ge('joinDate', LocalDate.now().withDayOfMonth(1))
-            }
+            totalPostings: postings?.size() ?: 0,
+            activePostings: postings?.findAll { it.isActive }?.size() ?: 0,
+            totalCandidates: candidates?.size() ?: 0,
+            pendingCandidates: candidates?.findAll { it.status == 'NEW' }?.size() ?: 0,
+            hiredThisMonth: candidates?.findAll { it.status == 'HIRED' && it.joinDate >= startDate.toDate() }?.size() ?: 0
         ]
     }
 

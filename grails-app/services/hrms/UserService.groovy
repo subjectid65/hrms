@@ -26,7 +26,7 @@ class UserService {
             phone: '+971-50-000-0000',
             enabled: true,
             isAdmin: isAdmin,
-            company: Company.get(1),
+            company: Company.findAll()[0] ?: null,
             createdBy: null as Long
         )
         user.save(flush: true, failOnError: true)
