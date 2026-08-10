@@ -18,7 +18,8 @@ class CompanyController {
     def list() {
         def companies = employeeService.listCompanies(params)
         def total = employeeService.countCompanies(params)
-        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([companies: companies, total: total, offset: params.offset, max: params.max])
+        def serialized = companies.collect { c -> [id: c.id, companyName: c.companyName, companyCode: c.companyCode, isActive: c.isActive] }
+        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([companies: serialized, total: total, offset: params.offset, max: params.max])
     }
 
     def show(Long id) {
@@ -28,7 +29,7 @@ class CompanyController {
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Company not found'])
             return
         }
-        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson(company)
+        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([id: company.id, companyName: company.companyName, companyCode: company.companyCode, isActive: company.isActive])
     }
 
     def create() {

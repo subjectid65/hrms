@@ -17,7 +17,8 @@ class EmployeeController {
     def list(Long companyId) {
         def employees = employeeService.listEmployees(companyId, params)
         def total = employeeService.countEmployees(companyId, params)
-        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([employees: employees, total: total, offset: params.offset, max: params.max])
+        def serialized = employees.collect { e -> [id: e.id, employeeCode: e.employeeCode, firstName: e.firstName, lastName: e.lastName, email: e.email, jobTitle: e.jobTitle, department: e.department ? [id: e.department.id, name: e.department.name] : null, designation: e.designation ? [id: e.designation.id, name: e.designation.name] : null, isActive: e.isActive] }
+        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([employees: serialized, total: total, offset: params.offset, max: params.max])
     }
 
     def show(Long companyId, Long id) {
@@ -27,14 +28,14 @@ class EmployeeController {
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee not found'])
             return
         }
-        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson(employee)
+        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([id: employee.id, employeeCode: employee.employeeCode, firstName: employee.firstName, lastName: employee.lastName, email: employee.email, jobTitle: employee.jobTitle, department: employee.department ? [id: employee.department.id, name: employee.department.name] : null, designation: employee.designation ? [id: employee.designation.id, name: employee.designation.name] : null, isActive: employee.isActive])
     }
 
     def create(Long companyId) {
         try {
             def employee = employeeService.createEmployee(companyId, request.JSON, session?.user?.id)
             response.status = HttpStatus.CREATED.value()
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee created successfully', employee: employee])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee created successfully', employee: [id: employee.id, employeeCode: employee.employeeCode, firstName: employee.firstName, lastName: employee.lastName, email: employee.email, jobTitle: employee.jobTitle, isActive: employee.isActive]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -44,7 +45,7 @@ class EmployeeController {
     def update(Long companyId, Long id) {
         try {
             def employee = employeeService.updateEmployee(id, request.JSON, session?.user?.id)
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee updated successfully', employee: employee])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee updated successfully', employee: [id: employee.id, employeeCode: employee.employeeCode, firstName: employee.firstName, lastName: employee.lastName, email: employee.email, jobTitle: employee.jobTitle, isActive: employee.isActive]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -54,7 +55,7 @@ class EmployeeController {
     def terminate(Long companyId, Long id) {
         try {
             def employee = employeeService.terminateEmployee(id, request.JSON, session?.user?.id)
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee terminated successfully', employee: employee])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee terminated successfully', employee: [id: employee.id, employeeCode: employee.employeeCode, firstName: employee.firstName, lastName: employee.lastName, isActive: employee.isActive, terminationDate: employee.terminationDate]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -64,7 +65,7 @@ class EmployeeController {
     def rehire(Long companyId, Long id) {
         try {
             def employee = employeeService.rehireEmployee(id, session?.user?.id)
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee rehired successfully', employee: employee])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Employee rehired successfully', employee: [id: employee.id, employeeCode: employee.employeeCode, firstName: employee.firstName, lastName: employee.lastName, isActive: employee.isActive]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -85,7 +86,8 @@ class EmployeeController {
         try {
             def departments = employeeService.listDepartments(companyId, params)
             def total = employeeService.countDepartments(companyId, params)
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([departments: departments, total: total])
+            def serialized = departments.collect { d -> [id: d.id, name: d.name, code: d.code, isActive: d.isActive] }
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([departments: serialized, total: total])
         } catch (NoSuchElementException e) {
             response.status = HttpStatus.NOT_FOUND.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -96,7 +98,7 @@ class EmployeeController {
         try {
             def dept = employeeService.createDepartment(companyId, request.JSON, session?.user?.id)
             response.status = HttpStatus.CREATED.value()
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Department created successfully', department: dept])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Department created successfully', department: [id: dept.id, name: dept.name, code: dept.code, isActive: dept.isActive]])
         } catch (NoSuchElementException e) {
             response.status = HttpStatus.NOT_FOUND.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -109,7 +111,7 @@ class EmployeeController {
     def updateDepartment(Long companyId, Long id) {
         try {
             def dept = employeeService.updateDepartment(id, request.JSON)
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Department updated successfully', department: dept])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Department updated successfully', department: [id: dept.id, name: dept.name, code: dept.code, isActive: dept.isActive]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])
@@ -118,14 +120,15 @@ class EmployeeController {
 
     def listDesignations(Long companyId) {
         def designations = employeeService.listDesignations(companyId, params)
-        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson(designations)
+        def serialized = designations.collect { d -> [id: d.id, name: d.name, code: d.code, isActive: d.isActive] }
+        render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson(serialized)
     }
 
     def createDesignation(Long companyId) {
         try {
             def designation = employeeService.createDesignation(companyId, request.JSON, session?.user?.id)
             response.status = HttpStatus.CREATED.value()
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Designation created successfully', designation: designation])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Designation created successfully', designation: [id: designation.id, name: designation.name, code: designation.code, isActive: designation.isActive]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])

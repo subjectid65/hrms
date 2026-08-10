@@ -56,7 +56,7 @@ class AuthController {
         try {
             def user = userService.register(request.JSON)
             response.status = HttpStatus.CREATED.value()
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'User registered successfully', user: user])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'User registered successfully', user: [id: user.id, username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email, isAdmin: user.isAdmin]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([success: false, message: e.message])
@@ -65,7 +65,11 @@ class AuthController {
 
     def profile() {
         if (session.currentUser) {
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson(session.currentUser)
+            def u = session.currentUser
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([
+                id: u.id, username: u.username, firstName: u.firstName, lastName: u.lastName,
+                email: u.email, isAdmin: u.isAdmin, companyName: u.company?.companyName
+            ])
         } else {
             response.status = HttpStatus.UNAUTHORIZED.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([success: false, message: 'Not logged in'])
@@ -76,7 +80,7 @@ class AuthController {
         try {
             def user = userService.updateProfile(session.currentUser.id, request.JSON)
             session.currentUser = user
-            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Profile updated', user: user])
+            render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: 'Profile updated', user: [id: user.id, username: user.username, firstName: user.firstName, lastName: user.lastName, email: user.email, isAdmin: user.isAdmin]])
         } catch (Exception e) {
             response.status = HttpStatus.BAD_REQUEST.value()
             render contentType: 'application/json', text: new groovy.json.JsonOutput().toJson([message: e.message])

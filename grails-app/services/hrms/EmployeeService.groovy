@@ -316,7 +316,10 @@ class EmployeeService {
             }
             company = all.get(0)
         }
-        return Department.findAll { company == it.company && isActive == (params.isActive != false) }?.size() ?: 0
+        if (params.isActive != null) {
+            return Department.findAll { company == it.company && isActive == params.isActive }.size() ?: 0
+        }
+        return Department.findAll { company == it.company }.size() ?: 0
     }
 
     def createDepartment(Long companyId, Map<String, Object> data, Long createdBy) {
