@@ -14,12 +14,13 @@ class AuthController {
     def login() {
         try {
             session.invalidate()
+            def freshSession = request.getSession(true)
             def role = params.role ?: 'admin'
             def result = userService.loginByRole(role)
             if (result.success) {
                 def u = result.user
-                session.currentUser = u
-                session.companyId = u?.company?.id
+                freshSession.currentUser = u
+                freshSession.companyId = u?.company?.id
                 def userDto = [
                     id: u?.id,
                     username: u?.username,

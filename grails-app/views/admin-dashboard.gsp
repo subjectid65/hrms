@@ -404,6 +404,17 @@
         const role = sessionStorage.getItem('userRole') || 'admin';
         document.getElementById('user-name-display').textContent = roleNames[role] || role;
         document.getElementById('user-avatar-display').textContent = roleAvatars[role] || '?';
+        async function saveDepartment(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const obj = Object.fromEntries(data);
+            console.log('saveDepartment called, companyId:', currentCompanyId, 'data:', obj);
+            const result = await api(API + '/companies/' + currentCompanyId + '/departments', { method: 'POST', body: JSON.stringify(obj) });
+            console.log('saveDepartment result:', result);
+            if (result.department) { closeModal('department-modal'); loadDepartments(); }
+            else alert(result.message || 'Failed');
+        }
         document.addEventListener('DOMContentLoaded', () => { loadDashboard(); });
     </script>
 </body>
